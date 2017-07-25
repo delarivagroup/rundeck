@@ -70,13 +70,9 @@ if [ ! -f "${initfile}" ]; then
        sudo -u rundeck ssh-keygen -t rsa -b 4096 -f /var/lib/rundeck/.ssh/id_rsa -N ''
    fi
 
-   if [ "$(ls -Ap /etc/rundeck | grep -v /)" ]; then
-       echo "=>/etc/rundeck check OK"
-   else
-       echo "=>/etc/rundeck empty...setting up defaults"
-       cp -Rn /opt/rundeck-defaults/* /etc/rundeck
-       chown -R rundeck:rundeck /etc/rundeck
-   fi
+   echo "=>Setting up /etc/rundeck empty...(without replacing)"
+   cp -Rn /opt/rundeck-defaults/* /etc/rundeck
+   chown -R rundeck:rundeck /etc/rundeck
 
    if [ ! -f /etc/rundeck/ssl/truststore ]; then
        echo "=>Generating ssl cert"
