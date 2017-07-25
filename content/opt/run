@@ -70,11 +70,11 @@ if [ ! -f "${initfile}" ]; then
        sudo -u rundeck ssh-keygen -t rsa -b 4096 -f /var/lib/rundeck/.ssh/id_rsa -N ''
    fi
 
-   if [ "$(ls -A /etc/rundeck)" ]; then
+   if [ "$(ls -Ap /etc/rundeck | grep -v /)" ]; then
        echo "=>/etc/rundeck check OK"
    else
        echo "=>/etc/rundeck empty...setting up defaults"
-       cp -R /opt/rundeck-defaults/* /etc/rundeck
+       cp -Rn /opt/rundeck-defaults/* /etc/rundeck
        chown -R rundeck:rundeck /etc/rundeck
    fi
 
@@ -133,7 +133,7 @@ if [ ! -f "${initfile}" ]; then
    else
       echo "dataSource.password = ${RUNDECK_PASSWORD}" >> /etc/rundeck/rundeck-config.properties
    fi
-   
+
    # Check if we need to set the rundeck.gui.brand.html property
    if [ -n "${GUI_BRAND_HTML}" ]; then
       if grep -q rundeck.gui.brand.html /etc/rundeck/rundeck-config.properties ; then
@@ -142,7 +142,7 @@ if [ ! -f "${initfile}" ]; then
         echo "rundeck.gui.brand.html = ${GUI_BRAND_HTML}" >> /etc/rundeck/rundeck-config.properties
       fi
    fi
-   
+
    # framework.properties
    sed -i 's,framework.server.name\ \=.*,framework.server.name\ \=\ '${SERVER_HOSTNAME}',g' /etc/rundeck/framework.properties
    sed -i 's,framework.server.hostname\ \=.*,framework.server.hostname\ \=\ '${SERVER_HOSTNAME}',g' /etc/rundeck/framework.properties
